@@ -56,7 +56,8 @@ export default function AssignmentEditor() {
             <select id="wd-submission-type">
                 <option selected value="ONLINE">Online</option>
                 <option value="IN-PERSON">In person</option>
-            </select>
+            </select><br />
+            <br />
             <label>Online Entry Options</label>
                 <br/>
                 <input type="checkbox" id="wd-text-entry"/>
