@@ -7,12 +7,13 @@ import TOC from './TOC';
 export default function Labs() {
     return (
         <div id="wd-labs">
-            <h1>Labs</h1>
-            <TOC />
-            <p>Shiting Huang</p>
+            <h1>Shiting Huang</h1>
             <p>NUID: 002087989</p>
             <p>Course: Web Development</p>
+            <p>Summer 2025</p>
             <p>Section: 04</p>
+            <h1>Labs</h1>
+            <TOC />
             <Routes>
                 <Route path="/" element={<Navigate to="Lab1" />} />
                 <Route path="/Lab1" element={<Lab1 />} />
