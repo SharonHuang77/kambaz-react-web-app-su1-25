@@ -22,7 +22,7 @@ export default function KambazNavigation() {
         to="/Kambaz/Account" 
         as={Link}
         className="text-center border-0 bg-black text-white">
-        <FaRegCircleUser className="fs-1 text-danger" />
+        <FaRegCircleUser className="fs-1 text-white" />
         <br />
         Account 
       </ListGroup.Item>
