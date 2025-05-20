@@ -13,6 +13,15 @@ export default function Flex() {
                     Box 3 Box 3
                 </div>
             </div>
+
+            <div className="wd-flex-row-container">
+                <div className="wd-bg-color-yellow d-width-75px">
+                    Column 1</div>
+                <div className="wd-bg-color-blue">
+                    Column 2</div>
+                <div className="wd-bg-color-red wd-flex-grow-1">
+                    Column 3</div>
+            </div>
         </div>
     );
 }
