@@ -6,7 +6,7 @@ export default function CourseNavigation() {
   const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades", "People"];
   const { pathname } = useLocation();
   const { cid } = useParams();
-  const course = courses.find((course) => course._id === cid);
+  // const course = courses.find((course) => course._id === cid);
   return (
     <div id="wd-courses-navigation" className="wd list-group fs-5 rounded-0 d-none d-md-block">
       {links.map((link) => (
