@@ -1,31 +1,35 @@
 import { Form, Button, Row, Col } from "react-bootstrap";
+import {useParams} from "react-router";
+import * as db from "../../Database";
+import { parse, format } from "date-fns";
 
 export default function AssignmentEditor() {
+  const {cid, aid} = useParams();
+  const assignment = db.assignments.find(
+    (assignment:any) => assignment._id === aid && assignment.course === cid);
+    if (!assignment) {
+      return <div className="text-danger">Assignment not found</div>;}
+    const formatDate = (dateString: string) => {
+      try {
+        const parsed = parse(dateString, "MMMM d, yyyy 'at' hh:mm a", new Date());
+        return format(parsed, "yyyy-MM-dd"); 
+      } catch {
+        return "";
+      }
+    };
     return (
       <div id="wd-assignments-editor">
         <label htmlFor="wd-name">Assignment Name</label>
         <Form>
           <Form.Group controlId="wd-name" className="mb-3">
-            <Form.Control type="text" placeholder="A1" />
+            <Form.Control type="text" value={assignment.title} />
           </Form.Group>
 
           <Form.Group controlId="wd-description" className="mb-3">
             <Form.Control
               as="textarea"
               rows={14}
-              defaultValue={`
-                The assignment is available online 
-
-Submit a link to the landing page of your Web application running on Netlify.
-                
-The landing page should include the following:
-- Your full name and section
-- Links to each of the lab assignments
-- Link to the kanbas application
-- Links to all relevant source code repositories
-
-The kanbas application should include a link to navigate back to the landing page.
-                `.trim()}
+              defaultValue={assignment ? assignment.description : ""}
                 />
         </Form.Group>
 
@@ -34,7 +38,7 @@ The kanbas application should include a link to navigate back to the landing pag
               <Form.Label htmlFor="wd-points">Points</Form.Label>
           </Col>
           <Col md={9}>
-              <Form.Control type="number" id="wd-points" defaultValue={100} />
+              <Form.Control type="number" id="wd-points" defaultValue={assignment.points} />
           </Col>
         </Row>
 
@@ -129,7 +133,7 @@ The kanbas application should include a link to navigate back to the landing pag
               <Form.Control
                 id="wd-due-date"
                 type="date"
-                defaultValue="2024-05-13"
+                defaultValue={formatDate(assignment.dueDate)}
               />
               <br />
               <br />
@@ -139,7 +143,7 @@ The kanbas application should include a link to navigate back to the landing pag
                   <Form.Control
                     id="wd-available-from"
                     type="date"
-                    defaultValue="2024-05-06"
+                    defaultValue={formatDate(assignment.notAvailableUntil)}
                   />
                 </Col>
                 <Col md={6}>
@@ -147,7 +151,6 @@ The kanbas application should include a link to navigate back to the landing pag
                   <Form.Control
                     id="wd-available-until"
                     type="date"
-                    defaultValue="2024-05-20"
                   />
                 </Col>
               </Row>
@@ -158,8 +161,8 @@ The kanbas application should include a link to navigate back to the landing pag
         <hr />
 
         <div className="d-flex justify-content-end gap-2 mt-4">
-          <Button variant="secondary">Cancel</Button>
-          <Button variant="danger">Save</Button>
+          <Button variant="secondary" as="a" href={`#/Kambaz/Courses/${assignment.course}/Assignments`}>Cancel</Button>
+          <Button variant="danger" as="a" href={`#/Kambaz/Courses/${assignment.course}/Assignments`}>Save</Button>
         </div>
       </Form>
     </div>
