@@ -104,7 +104,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
+      <h2 id="wd-dashboard-published">Published Courses ({coursesToDisplay.length})</h2> <hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {coursesToDisplay.map((course: any) => {
