@@ -4,7 +4,7 @@ import {useNavigate, useParams} from "react-router";
 import { parse, format } from "date-fns";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addAssignment, editAssignment, updateAssignment, deleteAssignment } from "./reducer";
+import { addAssignment, updateAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
   const {cid, aid} = useParams();
