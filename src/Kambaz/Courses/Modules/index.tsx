@@ -53,10 +53,12 @@ export default function Modules() {
                             }}
                             defaultValue={module.name}/>
                     )}
-                    <ModuleControlButtons 
+                    {isFaculty && (
+                      <ModuleControlButtons 
                         moduleId={module._id}
                         deleteModule={(moduleId) => dispatch(deleteModule(moduleId))}
                         editModule={(moduleId) => dispatch(editModule(moduleId))}/>
+                    )}
                   </div>
                   {module.lessons && (
                     <ListGroup className="wd-lessons rounded-0">
