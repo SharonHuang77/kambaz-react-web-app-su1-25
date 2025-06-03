@@ -1,35 +1,123 @@
 import { Form, Button, Row, Col } from "react-bootstrap";
-import {useParams} from "react-router";
-import * as db from "../../Database";
+import {useNavigate, useParams} from "react-router";
+// import * as db from "../../Database";
 import { parse, format } from "date-fns";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addAssignment, editAssignment, updateAssignment, deleteAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
   const {cid, aid} = useParams();
-  const assignment = db.assignments.find(
-    (assignment:any) => assignment._id === aid && assignment.course === cid);
-    if (!assignment) {
-      return <div className="text-danger">Assignment not found</div>;}
-    const formatDate = (dateString: string) => {
-      try {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const {assignments} = useSelector((state: any) => state.assignmentsReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  
+  const isFaculty = currentUser?.role === "FACULTY";
+
+  const isNewAssignment = aid === "new";
+
+  const existingAssignment = assignments.find(
+    (assignment: any) => assignment._id === aid && assignment.course === cid
+  );
+
+  const [assignment, setAssignment] = useState({
+      _id: aid || "",
+      title: "New Assignment",
+      description: "New Assignment Description",
+      points: 100,
+      dueDate: "",
+      notAvailableUntil: "",
+      availableUntil: "",
+      course: cid || "",
+  });
+
+  useEffect(() => {
+    if (!isNewAssignment && existingAssignment) {
+        setAssignment({
+            ...existingAssignment,
+            dueDate: formatDateForInput(existingAssignment.dueDate),
+            notAvailableUntil: formatDateForInput(existingAssignment.notAvailableUntil),
+            availableUntil: formatDateForInput(existingAssignment.availableUntil || ""),
+        });
+    }
+  }, [isNewAssignment, existingAssignment]);
+
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return "";
+    try {
         const parsed = parse(dateString, "MMMM d, yyyy 'at' hh:mm a", new Date());
-        return format(parsed, "yyyy-MM-dd"); 
-      } catch {
+        return format(parsed, "yyyy-MM-dd");
+    } catch {
         return "";
-      }
+    }
+  };
+
+  const formatDateForDisplay = (dateInput: string) => {
+    if (!dateInput) return "";
+    try {
+        const date = new Date(dateInput + 'T23:59:00');
+        return format(date, "MMMM d, yyyy 'at' hh:mm a");
+    } catch {
+        return dateInput;
+    }
+  };
+
+  const handleSave = () => {
+    const assignmentToSave = {
+        ...assignment,
+        dueDate: formatDateForDisplay(assignment.dueDate),
+        notAvailableUntil: formatDateForDisplay(assignment.notAvailableUntil),
+        availableUntil: formatDateForDisplay(assignment.availableUntil),
     };
+
+    if (isNewAssignment) {
+        dispatch(addAssignment(assignmentToSave));
+    } else {
+        dispatch(updateAssignment(assignmentToSave));
+    }
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
+
+  const handleCancel = () => {
+      navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
+
+  if (!isNewAssignment && !existingAssignment) {
+      return <div className="text-danger">Assignment not found</div>;
+  }
+
+  // const assignment = db.assignments.find(
+  //   (assignment:any) => assignment._id === aid && assignment.course === cid);
+  //   if (!assignment) {
+  //     return <div className="text-danger">Assignment not found</div>;}
+  //   const formatDate = (dateString: string) => {
+  //     try {
+  //       const parsed = parse(dateString, "MMMM d, yyyy 'at' hh:mm a", new Date());
+  //       return format(parsed, "yyyy-MM-dd"); 
+  //     } catch {
+  //       return "";
+  //     }
+  //   };
     return (
       <div id="wd-assignments-editor">
         <label htmlFor="wd-name">Assignment Name</label>
         <Form>
           <Form.Group controlId="wd-name" className="mb-3">
-            <Form.Control type="text" value={assignment.title} />
+            <Form.Control 
+              type="text" 
+              value={assignment.title}
+              onChange = {isFaculty ? (e) => setAssignment({ ...assignment, title: e.target.value }) : undefined}
+              readOnly={!isFaculty} />
           </Form.Group>
 
           <Form.Group controlId="wd-description" className="mb-3">
             <Form.Control
               as="textarea"
               rows={14}
-              defaultValue={assignment ? assignment.description : ""}
+              value={assignment.description}
+              onChange = {isFaculty ? (e) => setAssignment({ ...assignment, description: e.target.value }) : undefined}
                 />
         </Form.Group>
 
@@ -38,7 +126,11 @@ export default function AssignmentEditor() {
               <Form.Label htmlFor="wd-points">Points</Form.Label>
           </Col>
           <Col md={9}>
-              <Form.Control type="number" id="wd-points" defaultValue={assignment.points} />
+              <Form.Control 
+              type="number" 
+              id="wd-points" 
+              value={assignment.points}
+              onChange = {isFaculty ? (e) => setAssignment({ ...assignment, points: parseInt(e.target.value) }): undefined}/>
           </Col>
         </Row>
 
@@ -133,7 +225,9 @@ export default function AssignmentEditor() {
               <Form.Control
                 id="wd-due-date"
                 type="date"
-                defaultValue={formatDate(assignment.dueDate)}
+                value={assignment.dueDate}
+                onChange={isFaculty ? (e) => setAssignment({ ...assignment, dueDate: e.target.value }) : undefined}
+                readOnly={!isFaculty}
               />
               <br />
               <br />
@@ -143,7 +237,9 @@ export default function AssignmentEditor() {
                   <Form.Control
                     id="wd-available-from"
                     type="date"
-                    defaultValue={formatDate(assignment.notAvailableUntil)}
+                    value={assignment.notAvailableUntil}
+                    onChange={isFaculty ? (e) => setAssignment({ ...assignment, notAvailableUntil: e.target.value }) : undefined}
+                    readOnly={!isFaculty}
                   />
                 </Col>
                 <Col md={6}>
@@ -151,6 +247,9 @@ export default function AssignmentEditor() {
                   <Form.Control
                     id="wd-available-until"
                     type="date"
+                    value={assignment.availableUntil}
+                    onChange={isFaculty ? (e) => setAssignment({ ...assignment, availableUntil: e.target.value }) : undefined}
+                    readOnly={!isFaculty}
                   />
                 </Col>
               </Row>
@@ -161,8 +260,12 @@ export default function AssignmentEditor() {
         <hr />
 
         <div className="d-flex justify-content-end gap-2 mt-4">
-          <Button variant="secondary" as="a" href={`#/Kambaz/Courses/${assignment.course}/Assignments`}>Cancel</Button>
-          <Button variant="danger" as="a" href={`#/Kambaz/Courses/${assignment.course}/Assignments`}>Save</Button>
+          <Button variant="secondary" onClick={handleCancel}>
+            {isFaculty ? "Cancel" : "Back to Assignments"}
+          </Button>
+          {isFaculty && (
+            <Button variant="danger" onClick={handleSave}>Save</Button>
+          )}
         </div>
       </Form>
     </div>

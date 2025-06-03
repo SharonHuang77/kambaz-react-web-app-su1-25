@@ -6,13 +6,14 @@ import AssignmentEditor from "./Assignments/Editor";
 import People from "./People/Table";
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa6";
-import { courses } from "../Database";
+import { useSelector } from "react-redux";
 
 
 export default function Courses() {
   const { cid } = useParams();
-  const course = courses.find(
-    (course) => course._id === cid);
+  const { courses } = useSelector((state: any) => state.coursesReducer);
+  const course = courses.find((course: any) => course._id === cid);
+
   const {pathname} = useLocation();
   return (
     <div id="wd-courses">

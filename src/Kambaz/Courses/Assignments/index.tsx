@@ -8,11 +8,29 @@ import GreenCheckmark from "../Modules/GreenCheckmark";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import ExamTitle from "./ExamTitle";
 import {useParams} from "react-router";
-import * as db from "../../Database";
+import { useDispatch, useSelector } from "react-redux";
+import { FaTrash } from "react-icons/fa";
+import { deleteAssignment } from "./reducer";
+
+// import * as db from "../../Database";
 
 export default function Assignments() {
   const {cid} = useParams();
-  const assignments = db.assignments;
+  const dispatch = useDispatch();
+
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+  const isFaculty = currentUser?.role === "FACULTY";
+
+  const courseAssignments = assignments.filter((assignment: any) => assignment.course === cid);
+
+  const handleDeleteAssignment = (assignmentId: string) => {
+    if (window.confirm("Are you sure you want to remove this assignment?")) {
+        dispatch(deleteAssignment(assignmentId));
+    }
+};
+
     return (
       <div id="wd-assignments">
         <AssignmentControls /><br /><br />
@@ -24,10 +42,9 @@ export default function Assignments() {
                 ASSIGNMENTS
               <AssignmentTitle />
             </div>
-            {assignments
-            .filter((assignment:any) => assignment.course === cid)
+            {courseAssignments
             .map((assignment:any) => (
-                <ListGroup className="wd-assignment rounded-0">
+                <ListGroup className="wd-assignment rounded-0" key={assignment._id}>
                   <ListGroup.Item className="wd-assignment px-3 py-3 d-flex justify-content-between align-items-center">
                     <div className="me-3 d-flex align-items-center">
                       <BsGripVertical className="me-2 fs-3" />
@@ -39,7 +56,7 @@ export default function Assignments() {
                         href={`#/Kambaz/Courses/${assignment.course}/Assignments/${assignment._id}`}
                         className="fw-semibold text-dark text-decoration-none"
                       >
-                        {assignment._id}
+                        {assignment.title || assignment._id}
                       </a>
                       <div className="text-muted small">
                         <span className="text-danger">Multiple Modules</span> |
@@ -47,51 +64,22 @@ export default function Assignments() {
                         <strong className="ms-1">Due</strong> {assignment.dueDate}| {assignment.points} pts
                       </div>
                     </div>
+                    {isFaculty && (
                     <div className="d-flex align-items-center ms-3">
                       <GreenCheckmark />
+                      <FaTrash 
+                          className="text-danger fs-5 cursor-pointer"
+                          onClick={() => handleDeleteAssignment(assignment._id)}
+                          title="Delete Assignment"
+                          
+                      />
                       <AssignmentControlButtons />
                     </div>
+                    )}
                    </ListGroup.Item>
                 </ListGroup>
                 ))}
               </ListGroup.Item>
-
-            {/* <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
-              <div className="wd-title p-3 ps-2 bg-secondary">
-                <BsGripVertical className="me-2 fs-3" />
-                <IoChevronDown className="me-2 text-muted" />
-                 ASSIGNMENTS 
-                <AssignmentTitle />
-              </div>
-              <ListGroup className="wd-assignment rounded-0">
-                <ListGroup.Item className="wd-assignment px-3 py-3 d-flex justify-content-between align-items-center">
-                  <div className="me-3 d-flex align-items-center">
-                    <BsGripVertical className="me-2 fs-3" />
-                    <MdEditNote className="me-2 fs-3" style={{ color: 'green' }} />
-                  </div>
-
-                  <div className="flex-grow-1">
-                    <a
-                      href="#/Kambaz/Courses/1234/Assignments/123"
-                      className="fw-semibold text-dark text-decoration-none"
-                    >
-                      A1
-                    </a>
-                    <div className="text-muted small">
-                      <span className="text-danger">Multiple Modules</span> |
-                      <strong className="ms-1">Not available until</strong> May 6 at 12:00am |
-                      <strong className="ms-1">Due</strong> May 13 at 11:59pm | 100 pts
-                    </div>
-                  </div>
-                  <div className="d-flex align-items-center ms-3">
-                    <GreenCheckmark />
-                    <AssignmentControlButtons />
-                  </div>
-                 </ListGroup.Item>
-              </ListGroup>
-
-            </ListGroup.Item>
-          </ListGroup> */}
 
           <ListGroup className="rounded-0" id="wd-assignments-title">
             <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
