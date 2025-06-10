@@ -10,7 +10,6 @@ import * as courseClient from "./Courses/client";
 import * as enrollmentsClient from "./Enrollments/client";
 
 
-
 export default function Dashboard(    
   { courses, course, setCourse, addNewCourse,
   deleteCourse, updateCourse, fetchCourses }: {
