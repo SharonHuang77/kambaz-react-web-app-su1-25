@@ -2,19 +2,21 @@ import { Row, Col, Card, Button, FormControl } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 // import * as db from "./Database";
-import { useState } from "react";
-import { enrollUser, unenrollUser } from "./Courses/enrollmentsReducer";
+import { useEffect, useState } from "react";
+import { enrollUser, unenrollUser } from "./Enrollments/enrollmentsReducer";
 // import { addCourse, deleteCourse, updateCourse } from "./Courses/reducer";
 // import * as userClient from "./Account/client";
-// import * as courseClient from "./Courses/client";
+import * as courseClient from "./Courses/client";
+import * as enrollmentsClient from "./Enrollments/client";
+
 
 
 export default function Dashboard(    
   { courses, course, setCourse, addNewCourse,
-  deleteCourse, updateCourse }: {
+  deleteCourse, updateCourse, fetchCourses }: {
       courses: any[]; course: any; setCourse: (course: any) => void;
       addNewCourse: () => void; deleteCourse: (course: any) => void;
-      updateCourse: () => void;
+      updateCourse: () => void; fetchCourses?: () => void;
   }) {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -24,6 +26,7 @@ export default function Dashboard(
   const isFaculty = currentUser?.role === "FACULTY";
 
   const [showAllCourses, setShowAllCourses] = useState(false);
+  const [allCourses, setAllCourses] = useState<any[]>([]);
   // const [course, setCourse] = useState({
   //   //_id: "1234",
   //   name: "New Course", 
@@ -63,23 +66,48 @@ export default function Dashboard(
     );
   };
 
-  const handleEnroll = (courseId: string) => {
+  const handleEnroll = async (courseId: string) => {
+    await enrollmentsClient.enrollUserInCourse(currentUser._id, courseId);
     dispatch(enrollUser({ userId: currentUser._id, courseId }));
+
+    if (fetchCourses) {
+      await fetchCourses();
+    }
   };
 
-  const handleUnenroll = (courseId: string) => {
+  const handleUnenroll = async (courseId: string) => {
+    await enrollmentsClient.unenrollUserFromCourse(currentUser._id, courseId);
     dispatch(unenrollUser({ userId: currentUser._id, courseId }));
+
+    if (fetchCourses) {
+      await fetchCourses();
+    }
   };
+
+  useEffect(() => {
+    const loadAllCourses = async () => {
+      try {
+        const allCoursesData = await courseClient.fetchAllCourses(); 
+        setAllCourses(allCoursesData);
+      } catch (error) {
+        console.error('Error loading all courses:', error);
+      }
+    };
+    
+    if (showAllCourses) {
+      loadAllCourses();
+    }
+  }, [showAllCourses]);
 
   const getCoursesToDisplay = () => {
     if (showAllCourses) {
-      return courses;
+      return allCourses;
     }
     return courses.filter((course: any) => isUserEnrolledInCourse(course._id));
   };
 
   const coursesToDisplay = getCoursesToDisplay();
-
+  
   return (
     <div id="wd-dashboard">
       <div>
