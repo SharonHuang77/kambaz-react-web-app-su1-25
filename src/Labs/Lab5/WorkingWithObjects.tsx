@@ -51,7 +51,6 @@ export default function WorkingWithObjects() {
       />
       <hr />
 
-      {/* Assignment Completed */}
       <a className="btn btn-primary float-end"
          href={`${ASSIGNMENT_API_URL}/completed/${assignment.completed}`}>
         Update Completed
@@ -88,7 +87,6 @@ export default function WorkingWithObjects() {
       />
       <hr />
 
-      {/* Module Description */}
       <h5>Modifying Module Description</h5>
       <a className="btn btn-primary float-end"
          href={`${MODULE_API_URL}/description/${module.description}`}>
