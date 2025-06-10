@@ -10,7 +10,9 @@ import ExamTitle from "./ExamTitle";
 import {useParams} from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { FaTrash } from "react-icons/fa";
-import { deleteAssignment } from "./reducer";
+import * as assignmentsClient from "./client";
+import { useEffect } from "react";
+import { setAssignments, deleteAssignment } from "./reducer";
 
 // import * as db from "../../Database";
 
@@ -25,11 +27,28 @@ export default function Assignments() {
 
   const courseAssignments = assignments.filter((assignment: any) => assignment.course === cid);
 
-  const handleDeleteAssignment = (assignmentId: string) => {
+  const handleDeleteAssignment = async (assignmentId: string) => {
     if (window.confirm("Are you sure you want to remove this assignment?")) {
+        await assignmentsClient.deleteAssignment(assignmentId);
         dispatch(deleteAssignment(assignmentId));
     }
-};
+  };
+
+  const fetchAssignments = async () => {
+    if (!cid) return;
+    try {
+      console.log('Fetching assignments for course:', cid);
+      const courseAssignments = await assignmentsClient.findAssignmentsForCourse(cid);
+      console.log('Assignments fetched:', courseAssignments);
+      dispatch(setAssignments(courseAssignments));
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAssignments();
+  }, [cid]);
 
     return (
       <div id="wd-assignments">

@@ -5,6 +5,7 @@ import { parse, format } from "date-fns";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
   const {cid, aid} = useParams();
@@ -64,7 +65,7 @@ export default function AssignmentEditor() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async() => {
     const assignmentToSave = {
         ...assignment,
         dueDate: formatDateForDisplay(assignment.dueDate),
@@ -73,9 +74,12 @@ export default function AssignmentEditor() {
     };
 
     if (isNewAssignment) {
-        dispatch(addAssignment(assignmentToSave));
+        const assignmentWithCourse = { ...assignmentToSave, course: cid };
+        const newAssignment = await assignmentsClient.addAssignment(assignmentWithCourse);
+        dispatch(addAssignment(newAssignment));
     } else {
-        dispatch(updateAssignment(assignmentToSave));
+        const updatedAssignment = await assignmentsClient.updateAssignment(assignmentToSave);
+        dispatch(updateAssignment(updatedAssignment || assignmentToSave));
     }
     navigate(`/Kambaz/Courses/${cid}/Assignments`);
   };
