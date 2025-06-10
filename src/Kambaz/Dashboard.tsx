@@ -3,47 +3,58 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 // import * as db from "./Database";
 import { useState } from "react";
-import { enrollUser, unenrollUser } from "./Courses/enrollmentsReducer"
-import { addCourse, deleteCourse, updateCourse } from "./Courses/reducer";
+import { enrollUser, unenrollUser } from "./Courses/enrollmentsReducer";
+// import { addCourse, deleteCourse, updateCourse } from "./Courses/reducer";
+// import * as userClient from "./Account/client";
+// import * as courseClient from "./Courses/client";
 
 
-export default function Dashboard() {
+export default function Dashboard(    
+  { courses, course, setCourse, addNewCourse,
+  deleteCourse, updateCourse }: {
+      courses: any[]; course: any; setCourse: (course: any) => void;
+      addNewCourse: () => void; deleteCourse: (course: any) => void;
+      updateCourse: () => void;
+  }) {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const { courses } = useSelector((state: any) => state.coursesReducer);
+  //const { courses } = useSelector((state: any) => state.coursesReducer);
   const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
   const isFaculty = currentUser?.role === "FACULTY";
 
   const [showAllCourses, setShowAllCourses] = useState(false);
-  const [course, setCourse] = useState({
-    _id: "1234", 
-    name: "New Course", 
-    number: "New Number",
-    startDate: "2023-09-10", 
-    endDate: "2023-12-15", 
-    description: "New Description",
-  });
+  // const [course, setCourse] = useState({
+  //   //_id: "1234",
+  //   name: "New Course", 
+  //   number: "New Number",
+  //   startDate: "2023-09-10", 
+  //   endDate: "2023-12-15", 
+  //   description: "New Description",
+  // });
 
-  const handleAddNewCourse = () => {
-    dispatch(addCourse(course));
-    setCourse({
-      _id: "1234", 
-      name: "New Course", 
-      number: "New Number",
-      startDate: "2023-09-10", 
-      endDate: "2023-12-15", 
-      description: "New Description",
-    });
-  };
+  // const handleAddNewCourse = async () => {
+  //   const newCourse = await userClient.createCourse(course);
+  //   dispatch(addCourse(newCourse));
+  //   setCourse({
+  //     //_id: "1234", 
+  //     name: "New Course", 
+  //     number: "New Number",
+  //     startDate: "2023-09-10", 
+  //     endDate: "2023-12-15", 
+  //     description: "New Description",
+  //   });
+  // };
 
-  const handleDeleteCourse = (courseId: string) => {
-    dispatch(deleteCourse(courseId));
-  };
+  // const handleDeleteCourse = async (courseId: string) => {
+  //   await courseClient.deleteCourse(courseId);
+  //   dispatch(deleteCourse(courseId));
+  // };
 
-  const handleUpdateCourse = () => {
-    dispatch(updateCourse(course));
-  };
+  // const handleUpdateCourse = async () => {
+  //   const updatedCourse = await courseClient.updateCourse(course);
+  //   dispatch(updateCourse(updatedCourse)); 
+  // };
   
   const isUserEnrolledInCourse = (courseId: string) => {
     return enrollments.some(
@@ -87,11 +98,11 @@ export default function Dashboard() {
           <h5>New Course
           <button className="btn btn-primary float-end"
                   id="wd-add-new-course-click"
-                  onClick={handleAddNewCourse} > 
+                  onClick={addNewCourse} > 
               Add 
           </button>
           <button className="btn btn-warning float-end me-2"
-                  onClick={handleUpdateCourse}
+                  onClick={updateCourse}
                   id="wd-update-course-click">
             Update
           </button><br></br><br></br>
@@ -164,7 +175,7 @@ export default function Dashboard() {
                     <Button id="wd-delete-course-click"
                       onClick={(event) => {
                         event.preventDefault();
-                        handleDeleteCourse(course._id);
+                        deleteCourse(course._id);
                       }} 
                       className="btn btn-danger float-end"
                       >
