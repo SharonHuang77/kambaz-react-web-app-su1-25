@@ -33,13 +33,13 @@ export default function TOC() {
                 <Nav.Link to="/Kambaz" as={Link}>Kambaz</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link to="https://github.com/SharonHuang77/kambaz-react-web-app-su1-25.git" as={Link} id="wd-github">My GitHub For Web</Nav.Link>
+                <Nav.Link to="https://github.com/SharonHuang77/kambaz-react-web-app-su1-25.git" as={Link} id="wd-github-react">My GitHub For Web</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link to="https://github.com/SharonHuang77/Kanbaz-node-server-app.git" as={Link} id="wd-github">My GitHub For Server</Nav.Link>
+                <Nav.Link to="https://github.com/SharonHuang77/Kanbaz-node-server-app.git" as={Link} id="wd-github-web">My GitHub For Server</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link to="https://kanbaz-node-server-app-p2i0.onrender.com" as={Link} id="wd-github">Render</Nav.Link>
+                <Nav.Link to="https://kanbaz-node-server-app-p2i0.onrender.com" as={Link} id="wd-render">Render</Nav.Link>
             </Nav.Item>
 
         </Nav>
