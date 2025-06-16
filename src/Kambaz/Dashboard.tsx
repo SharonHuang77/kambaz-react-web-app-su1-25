@@ -22,7 +22,7 @@ export default function Dashboard(
   //const { courses } = useSelector((state: any) => state.coursesReducer);
   const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
-  const isFaculty = currentUser?.role === "FACULTY";
+  const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
 
   const [showAllCourses, setShowAllCourses] = useState(false);
   const [allCourses, setAllCourses] = useState<any[]>([]);
@@ -69,18 +69,18 @@ export default function Dashboard(
     await enrollmentsClient.enrollUserInCourse(currentUser._id, courseId);
     dispatch(enrollUser({ userId: currentUser._id, courseId }));
 
-    if (fetchCourses) {
-      await fetchCourses();
-    }
+    // if (fetchCourses) {
+    //   await fetchCourses();
+    // }
   };
 
   const handleUnenroll = async (courseId: string) => {
     await enrollmentsClient.unenrollUserFromCourse(currentUser._id, courseId);
     dispatch(unenrollUser({ userId: currentUser._id, courseId }));
 
-    if (fetchCourses) {
-      await fetchCourses();
-    }
+    // if (fetchCourses) {
+    //   await fetchCourses();
+    // }
   };
 
   useEffect(() => {

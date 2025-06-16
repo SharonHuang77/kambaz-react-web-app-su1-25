@@ -38,7 +38,8 @@ export default function Kambaz() {
 
     const fetchCourses = async () => {
       try {
-        const fetchedCourses = await userClient.findMyCourses();
+        //const fetchedCourses = await userClient.findMyCourses();
+        const fetchedCourses = await courseClient.fetchAllCourses();
         console.log('Fetched courses:', fetchedCourses); //debug
         setCourses(fetchedCourses || []);
       } catch (error) {
@@ -48,17 +49,19 @@ export default function Kambaz() {
     };
 
     const updateCourse = async () => {
-      await courseClient.updateCourse(course);
+      const updatedCourse = await courseClient.updateCourse(course);
       setCourses(courses.map((c) => {
-          if (c._id === course._id) { return course; }
+          if (c._id === course._id) { return updatedCourse; }
           else { return c; }
       })
       );
+      setCourse(updatedCourse);
    };
   
 
     const addNewCourse = async () => {
-      const newCourse = await userClient.createCourse(course);
+      //const newCourse = await userClient.createCourse(course);
+      const newCourse = await courseClient.createCourse(course);
       setCourses([ ...courses, newCourse ]);
     };
 
@@ -79,7 +82,7 @@ export default function Kambaz() {
               <Routes>
                   <Route path="/" element={<Navigate to="/Kambaz/Account" />} />
                   <Route path="/Account/*" element={<Account />} />
-                  <Route path="/Dashboard/" element={
+                  <Route path="/Dashboard" element={
                     <ProtectedRoute>
                       <Dashboard
                         courses={courses}
