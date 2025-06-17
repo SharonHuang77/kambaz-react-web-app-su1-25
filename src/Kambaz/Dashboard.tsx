@@ -12,10 +12,12 @@ import * as enrollmentsClient from "./Enrollments/client";
 
 export default function Dashboard(    
   { courses, course, setCourse, addNewCourse,
-  deleteCourse, updateCourse, fetchCourses }: {
+  deleteCourse, updateCourse, fetchCourses, enrolling, setEnrolling, updateEnrollment}: {
       courses: any[]; course: any; setCourse: (course: any) => void;
       addNewCourse: () => void; deleteCourse: (course: any) => void;
       updateCourse: () => void; fetchCourses?: () => void;
+      enrolling: boolean; setEnrolling: (enrolling: boolean) => void;
+      updateEnrollment: (courseId: string, enrolled: boolean) => void;
   }) {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -66,21 +68,21 @@ export default function Dashboard(
   };
 
   const handleEnroll = async (courseId: string) => {
-    await enrollmentsClient.enrollUserInCourse(currentUser._id, courseId);
+    await enrollmentsClient.enrollIntoCourse(currentUser._id, courseId);
     dispatch(enrollUser({ userId: currentUser._id, courseId }));
 
-    // if (fetchCourses) {
-    //   await fetchCourses();
-    // }
+    if (fetchCourses) {
+      await fetchCourses();
+    }
   };
 
   const handleUnenroll = async (courseId: string) => {
-    await enrollmentsClient.unenrollUserFromCourse(currentUser._id, courseId);
+    await enrollmentsClient.unenrollFromCourse(currentUser._id, courseId);
     dispatch(unenrollUser({ userId: currentUser._id, courseId }));
 
-    // if (fetchCourses) {
-    //   await fetchCourses();
-    // }
+    if (fetchCourses) {
+      await fetchCourses();
+    }
   };
 
   useEffect(() => {
@@ -110,13 +112,18 @@ export default function Dashboard(
   return (
     <div id="wd-dashboard">
       <div>
-        <h1 id="wd-dashboard-title">Dashboard</h1> 
-        <Button
+        <h1 id="wd-dashboard-title">Dashboard
+          <button onClick={() => setShowAllCourses(!showAllCourses)} className="float-end btn btn-primary" >
+            {showAllCourses ? "My Courses" : "All Courses"}
+          </button>
+
+        </h1> 
+        {/* <Button
             variant="primary"
             onClick={() => setShowAllCourses(!showAllCourses)}
             className="mb-3 float-end"
           > {showAllCourses ? "My Enrollments" : "All Courses"}
-        </Button> <br></br><br></br>
+        </Button> <br></br><br></br> */}
       </div>
       <hr />
 
@@ -163,7 +170,9 @@ export default function Dashboard(
                     className="wd-dashboard-course-link text-decoration-none text-dark">
                 <Card.Img variant="top" src="/images/reactjs.jpg" width="100%" height={160}/>
                 <Card.Body className="card-body">
-                <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">{course.name}</Card.Title>
+                <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">
+                    {course.name}
+                </Card.Title>
                 <Card.Text  className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
                   {course.description}</Card.Text>
 
