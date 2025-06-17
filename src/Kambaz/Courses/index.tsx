@@ -3,7 +3,7 @@ import CoursesNavigation from "./Navigation";
 import Home from "./Home";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
-import People from "./People/Table";
+import People from "./People";
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa6";
 import { useSelector } from "react-redux";

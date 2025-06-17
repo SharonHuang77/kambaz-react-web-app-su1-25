@@ -12,12 +12,10 @@ import * as enrollmentsClient from "./Enrollments/client";
 
 export default function Dashboard(    
   { courses, course, setCourse, addNewCourse,
-  deleteCourse, updateCourse, fetchCourses, enrolling, setEnrolling, updateEnrollment}: {
+  deleteCourse, updateCourse, fetchCourses}: {
       courses: any[]; course: any; setCourse: (course: any) => void;
       addNewCourse: () => void; deleteCourse: (course: any) => void;
       updateCourse: () => void; fetchCourses?: () => void;
-      enrolling: boolean; setEnrolling: (enrolling: boolean) => void;
-      updateEnrollment: (courseId: string, enrolled: boolean) => void;
   }) {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -75,6 +73,20 @@ export default function Dashboard(
       await fetchCourses();
     }
   };
+
+  // const handleEnroll = async (courseId: string) => {
+  //   try {
+  //     await enrollmentsClient.enrollIntoCourse(currentUser._id, courseId);
+  //     dispatch(enrollUser({ userId: currentUser._id, courseId }));
+  
+  //     if (fetchCourses) {
+  //       await fetchCourses();
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to enroll:", error);
+  //     alert("Enroll failed. See console.");
+  //   }
+  // };
 
   const handleUnenroll = async (courseId: string) => {
     await enrollmentsClient.unenrollFromCourse(currentUser._id, courseId);
